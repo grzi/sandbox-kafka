@@ -18,7 +18,7 @@ public class SampleProducerWithCallback {
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9093");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9093"); // At least 2, so if one of the broker stop...
         properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "none");
         properties.setProperty(ProducerConfig.RETRIES_CONFIG,"0");

@@ -33,7 +33,7 @@ public class SampleConsumerBestPractice {
         // Latch for multiple threads
         CountDownLatch latch = new CountDownLatch(1);
 
-        Runnable consumerThread = new SampleConsumerRunnable<String,String>(latch, properties,Collections.singleton("testTopic"));
+        Runnable consumerThread = new SampleConsumerRunnable<String,String>(latch, properties,Collections.singleton("twitter_sniffer_buffer"));
         Thread thread = new Thread(consumerThread);
         thread.start();
 
