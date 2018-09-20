@@ -1,5 +1,6 @@
 package com.zenika.zthulj.twitter;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.record.CompressionType;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -33,6 +34,9 @@ public class KafkaProducerClient {
         properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
         properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024));
+
+        properties.setProperty(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,"com.zenika.zthulj.twitter.ProducerInterceptorImpl");
+
 
         kafkaProducer = new KafkaProducer<String,String>(properties);
 

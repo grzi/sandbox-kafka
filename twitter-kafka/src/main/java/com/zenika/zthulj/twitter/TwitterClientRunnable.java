@@ -39,7 +39,12 @@ public class TwitterClientRunnable implements Runnable{
 
         hosebirdEndpoint.trackTerms(Lists.newArrayList("tomb raider"));
 
-        Authentication hosebirdAuth = new OAuth1("", "", "", "");
+        Authentication hosebirdAuth = new OAuth1(
+                "",
+                "",
+                "-",
+                ""
+        );
 
         ClientBuilder builder = new ClientBuilder()
                 .name("Test-sniffer-kafka-tweets")

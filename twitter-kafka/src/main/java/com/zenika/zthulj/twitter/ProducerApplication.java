@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
-public class Application {
-    static Logger logger = LoggerFactory.getLogger(Application.class);
+public class ProducerApplication {
+    static Logger logger = LoggerFactory.getLogger(ProducerApplication.class);
 
     public static void main(String[] args) {
 
@@ -22,7 +22,7 @@ public class Application {
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                // Application has been interrupted
+                // ProducerApplication has been interrupted
                 logger.error("Interrupted Exception : ", e);
             }
         }));
@@ -32,7 +32,7 @@ public class Application {
         } catch (InterruptedException e) {
             logger.error("Interrupted Exception : ", e);
         }finally{
-            logger.info("Application closed");
+            logger.info("ProducerApplication closed");
         }
     }
 }
