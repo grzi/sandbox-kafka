@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +29,13 @@ public class ConsumerRunnable<k,v> implements Runnable {
     @Override
     public void run() {
         try{
+
             while(true){
                 ConsumerRecords<k,v> records = consumer.poll(Duration.ofMillis(100));
+                logger.info("received " + records.count() + " records");
                 ElasticClient.getInstance().indexRecords(records);
-
+                logger.info("Committed the offsets");
+                consumer.commitSync();
             }
         }catch(WakeupException e){
 

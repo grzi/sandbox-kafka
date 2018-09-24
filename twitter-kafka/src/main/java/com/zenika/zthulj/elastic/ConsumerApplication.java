@@ -24,6 +24,13 @@ public class ConsumerApplication {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "Elastic_consumer");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
+        // Disable the auto commit so as to create a 'at least once' policy
+        properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+
+        // Adding a min byte in order te reduce the requests count and have multiple messages
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "10");
+
+
         Runnable consumer = new ConsumerRunnable<String, String>(latch, properties, Collections.singleton("twitter_sniffer_buffer"));
         Thread thread = new Thread(consumer);
         thread.start();

@@ -1,15 +1,19 @@
 package com.zenika.zthulj.elastic;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.http.HttpHost;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +35,31 @@ public class ElasticClient {
 
 
     public void indexRecords(ConsumerRecords<?,?> records){
-        records.forEach(e->indexRecord(e));
+        if(records.count() > 0){
+
+
+        BulkRequest bulk = new BulkRequest();
+        records.forEach(e->bulk.add(createIndexRequestFromRecord(e)));
+            try {
+                BulkResponse response = client.bulk(bulk,RequestOptions.DEFAULT);
+                logger.info("Indexed in Elastic" );
+                // Here I should be handling errors from the response
+            } catch (IOException e) {
+               logger.error("Error while indexing into elastic search", e);
+            }
+
+
+        }
     }
 
     /**
      * This method will create a request and use the client to send records to ES
      * @param record a record from kafka
      */
-    private void indexRecord(ConsumerRecord<?,?> record) {
+    private IndexRequest createIndexRequestFromRecord(ConsumerRecord<?,?> record) {
 
         //Just logging some header information$
-        record.headers().forEach(e -> logger.info(" key : " + e.key() + " ; " + e.value()));
+        // record.headers().forEach(e -> logger.info(" key : " + e.key() + " ; " + e.value()));
 
         // Creation of the request
         IndexRequest request = new IndexRequest(
@@ -51,18 +69,16 @@ public class ElasticClient {
 
         request.source(record.value().toString(), XContentType.JSON);
 
-        try {
-            client.index(request, RequestOptions.DEFAULT);
-            logger.info("Indexed : " + request.id());
-        } catch (IOException e) {
-            logger.error("Error while calling elastic : ", e);
-        }
+        return request;
     }
 
     private String getTweetIdFromRecord(ConsumerRecord<?, ?> record) {
         if(null != record.value()){
             JsonObject jsonObject = gson.fromJson(record.value().toString(),JsonObject.class);
-            return jsonObject.get("id_str").getAsString();
+            JsonElement id = jsonObject.get("id_str");
+            if(id != null ){
+                return id.getAsString();
+            }
         }
         logger.error("No id found in record : " + record);
         return null;
