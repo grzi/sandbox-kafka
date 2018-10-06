@@ -41,10 +41,10 @@ public class TwitterClientRunnable implements Runnable{
         hosebirdEndpoint.trackTerms(Lists.newArrayList("the"));
 
         Authentication hosebirdAuth = new OAuth1(
-                "",
-                "",
-                "",
-                ""
+                "iY9nECTE4Hg8ZDeeZs0BbF5N2",
+                "GxNKVmsKzZ1g2kXFLtvzjzgeKPmK3h3DFhUeT8xs3KCuzj1QHb",
+                "476412032-n1Lh6U3vXMwGU2IJQLphiscLLZRhGleMDt3t35aT",
+                "oTT3kNLEDmf2X4NtiCllkz6BfgbEqEaZv4M8hF6AoGoTZ"
         );
 
         ClientBuilder builder = new ClientBuilder()

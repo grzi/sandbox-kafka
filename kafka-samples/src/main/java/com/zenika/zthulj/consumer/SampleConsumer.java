@@ -22,14 +22,14 @@ public class SampleConsumer {
         Properties properties = new Properties();
 
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Serdes.LongSerde.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9093");
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,"TestAppliscation3");
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,"TestAppliscation4");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 
         //Create and subscribe to a topic
         Consumer<String,String> consumer = new KafkaConsumer<String, String>(properties);
-        consumer.subscribe(Collections.singleton("twitter_word_counter"));
+        consumer.subscribe(Collections.singleton("my-truc-de-test"));
 
         while(true){
             ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(100));
