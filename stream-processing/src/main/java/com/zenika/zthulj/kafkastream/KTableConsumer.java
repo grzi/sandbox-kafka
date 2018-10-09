@@ -1,10 +1,7 @@
 package com.zenika.zthulj.kafkastream;
 
 import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.*;
 import org.apache.kafka.streams.kstream.TimeWindowedDeserializer;
 import org.apache.kafka.streams.kstream.Windowed;
 import org.slf4j.Logger;
@@ -22,29 +19,29 @@ public class KTableConsumer {
         Properties properties = new Properties();
 
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9093");
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,"TestAppliscationee4");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 
 
         final Deserializer<Windowed<String>> windowedDeserializer = new TimeWindowedDeserializer<>(Serdes.String().deserializer());
-        final KafkaConsumer<Windowed<String>, Long> consumer = new KafkaConsumer<>(properties,
+        final KafkaConsumer<Windowed<String>, Integer> consumer = new KafkaConsumer<>(properties,
                 windowedDeserializer,
-                Serdes.Long().deserializer());
+                Serdes.Integer().deserializer());
 
         //Create and subscribe to a topic
         consumer.subscribe(Collections.singleton("twitter_word_counter"));
 
         while(true){
-            ConsumerRecords<Windowed<String>,Long> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<Windowed<String>,Integer> records = consumer.poll(Duration.ofMillis(100));
             records.forEach(e-> readKtableContent(e));
         }
 
     }
 
-    private static void readKtableContent(ConsumerRecord<Windowed<String>, Long> e) {
-        Long myValue = e.value();
+    private static void readKtableContent(ConsumerRecord<Windowed<String>, Integer> e) {
+        Integer myValue = e.value();
         logger.info("topic : " + e.topic() + " ; partition : " + e.partition() + " ; " + e.key().key() + ":" + e.key().window().start() + ":" + e.key().window().end() +" ; "+myValue);
     }
 }

@@ -24,16 +24,16 @@ public class SampleConsumer {
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9093");
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,"TestAppliscation4");
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG,"TestAppliscation5");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 
         //Create and subscribe to a topic
         Consumer<String,String> consumer = new KafkaConsumer<String, String>(properties);
-        consumer.subscribe(Collections.singleton("my-truc-de-test"));
+        consumer.subscribe(Collections.singleton("twitter_sniffer_buffer"));
 
         while(true){
             ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(100));
-            records.forEach(e->logger.info("topic : " + e.topic() + " ; partition : " + e.partition() + " ; " + e.key()+" ; "+e.value().toString()));
+            records.forEach(e->logger.info("offset : " + e.offset() + " ; topic : " + e.topic() + " ; partition : " + e.partition() + " ; " + e.key()+" ; "+e.value().toString()));
         }
 
     }

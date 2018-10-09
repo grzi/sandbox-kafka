@@ -15,11 +15,12 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class KStreamSample {
     public static void main(String[] args) {
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount2");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount3");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9093");
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -30,19 +31,42 @@ public class KStreamSample {
         StreamsBuilder streamBuilder = new StreamsBuilder();
 
         KStream<String, String> kStream = streamBuilder.stream("twitter_sniffer_buffer");
+        /*
+            Ce stream va se charger de récupérer les tweets, extraire le message, récupérer chaque mot des messages et compter
+            les occurences de 'one' et 'two' afin de faire un 'concours'.
+
+            Défaut actuel = Ce n'est pas un aggregat final qui est envoyé mais toutes les étapes d'aggregats.
+            Il n'y a pas d'event 'final' si j'ai bien compris, donc si on veut un seul résultat pour une window,
+            il faut activer la compaction.. Le consumer rapide aura cependant besoin d'être idempotent car sinon il aura
+            des résultats faux car il lira toujours plusieurs résultats  pour un interval / mot donné
+            => Malheureusement c'est pas ce qu'il y a de plus pratique pour les métriques... :/
+
+
+            -> Apparement en flink on peut avoir uniquement le final result...
+
+
+
+
+
+         */
+        KTable<Windowed<String>, Integer> kTable =
+                kStream.flatMapValues(value -> Arrays.asList(extractTweet(value)))
+                        .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
+                        .filter((key, value) -> isSearched(value))
+                        .selectKey((key,value) -> value)
+                        .mapValues((readOnlyKey, value) -> 1)
+                        .groupByKey(Serialized.with(Serdes.String(),Serdes.Integer()))
+                        .windowedBy(TimeWindows.of(TimeUnit.SECONDS.toMillis(5)))
+                        .reduce((val, agg) -> val + agg)
+                ;
 
         // Pour me permettre de récupérer les occurences de 'one' et de 'two' dans les tweet qui passent dans kafka
-        KTable<Windowed<String>, Long> kTable =
-        kStream.flatMapValues(value -> Arrays.asList(extractTweet(value)))
-                .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
-                .filter((key, value) -> isSearched(value))
-                .groupBy((key, value) -> value)
-                .windowedBy(TimeWindows.of(1000))
-                .count();
+
+
 
         Serde<Windowed<String>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(String.class);
 
-        kTable.toStream().to("twitter_word_counter", Produced.with(windowedSerde, Serdes.Long()));
+        kTable.toStream().to("twitter_word_counter", Produced.with(windowedSerde, Serdes.Integer()));
         final KafkaStreams kafkaStream = new KafkaStreams(streamBuilder.build(),props);
         final CountDownLatch latch = new CountDownLatch(1);
 
