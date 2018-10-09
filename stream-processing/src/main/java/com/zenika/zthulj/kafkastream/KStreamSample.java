@@ -49,16 +49,16 @@ public class KStreamSample {
 
 
          */
-        KTable<Windowed<String>, Integer> kTable =
+        KTable<Windowed<String>, Long> kTable =
                 kStream.flatMapValues(value -> Arrays.asList(extractTweet(value)))
                         .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
                         .filter((key, value) -> isSearched(value))
                         .selectKey((key,value) -> value)
-                        .mapValues((readOnlyKey, value) -> 1)
-                        .groupByKey(Serialized.with(Serdes.String(),Serdes.Integer()))
+                        .groupByKey()
                         .windowedBy(TimeWindows.of(TimeUnit.SECONDS.toMillis(5)))
-                        .reduce((val, agg) -> val + agg)
+                        .count()
                 ;
+        
 
         // Pour me permettre de récupérer les occurences de 'one' et de 'two' dans les tweet qui passent dans kafka
 
@@ -66,7 +66,7 @@ public class KStreamSample {
 
         Serde<Windowed<String>> windowedSerde = WindowedSerdes.timeWindowedSerdeFrom(String.class);
 
-        kTable.toStream().to("twitter_word_counter", Produced.with(windowedSerde, Serdes.Integer()));
+        kTable.toStream().to("twitter_word_counter", Produced.with(windowedSerde, Serdes.Long()));
         final KafkaStreams kafkaStream = new KafkaStreams(streamBuilder.build(),props);
         final CountDownLatch latch = new CountDownLatch(1);
 
