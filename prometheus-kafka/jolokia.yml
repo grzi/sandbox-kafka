@@ -1,0 +1,113 @@
+# Module: jolokia
+# Docs: https://www.elastic.co/guide/en/beats/metricbeat/6.4/metricbeat-module-jolokia.html
+
+- module: jolokia
+  metricsets: ["jmx"]
+  period: 10s
+  hosts: ["localhost:8778"]
+  namespace: "metrics"
+  path: "/jolokia/?ignoreErrors=true&canonicalNaming=false"
+  jmx.mappings:
+  # kafka.server metrics
+  - mbean: 'kafka.server:type=ReplicaManager,name=UnderReplicatedPartitions'
+    attributes:
+    - attr: Value
+      field: kafka.underReplicatedPartitions
+  - mbean: 'kafka.server:type=ReplicaManager,name=PartitionCount'
+    attributes:
+    - attr: Value
+      field: kafka.partitionCount
+  - mbean: 'kafka.server:type=ReplicaManager,name=IsrShrinksPerSec'
+    attributes:
+    - attr: Count
+      field: kafka.IsrShrinksPerSec.total
+    - attr: OneMinuteRate
+      field: kafka.IsrShrinksPerSec.oneMinuteRate
+  - mbean: 'kafka.server:type=ReplicaManager,name=IsrExpandsPerSec'
+    attributes:
+    - attr: Count
+      field: kafka.IsrExpandsPerSec.total
+    - attr: OneMinuteRate
+      field: kafka.IsrExpandsPerSec.oneMinuteRate
+  - mbean: 'kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec'
+    attributes:
+    - attr: Count
+      field: kafka.messageInPerSecTotal.count
+    - attr: OneMinuteRate
+      field: kafka.messageInPerSecTotal.oneMinuteRate
+  - mbean: 'kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec,topic=*'
+    attributes:
+    - attr: Count
+      field: kafka.messageInPerSec.count
+    - attr: OneMinuteRate
+      field: kafka.messageInPerSec.oneMinuteRate
+  - mbean: 'kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec'
+    attributes:
+    - attr: Count
+      field: kafka.bytesInPerSecTotal.count
+    - attr: OneMinuteRate
+      field: kafka.bytesInPerSecTotal.oneMinuteRate
+  - mbean: 'kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec,topic=*'
+    attributes:
+    - attr: Count
+      field: kafka.bytesInPerSec.count
+    - attr: OneMinuteRate
+      field: kafka.bytesInPerSec.oneMinuteRate
+  - mbean: 'kafka.server:type=KafkaRequestHandlerPool,name=RequestHandlerAvgIdlePercent'
+    attributes:
+    - attr: Count
+      field: kafka.server.networkProcessorAvgIdlePercent.value
+    - attr: OneMinuteRate
+      field: kafka.server.networkProcessorAvgIdlePercent.oneMinuteRate
+  # kafka.controller
+  - mbean: 'kafka.controller:type=KafkaController,name=OfflinePartitionsCount'
+    attributes:
+    - attr: Value
+      field: kafka.offlinePartitionsCount
+  - mbean: 'kafka.controller:type=KafkaController,name=ActiveControllerCount'
+    attributes:
+    - attr: Value
+      field: kafka.activePartitionsCount
+  # Kafka.Network metrics
+  - mbean: 'kafka.network:type=RequestMetrics,name=RequestsPerSec,request=Produce,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.produceRequestPerSec.count
+    - attr: OneMinuteRate
+      field: kafka.produceRequestPerSec.oneMinuteRate
+  - mbean: 'kafka.network:type=RequestMetrics,name=RequestsPerSec,request=FetchConsumer,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.fetchConsumerRequestPerSec.count
+    - attr: OneMinuteRate
+      field: kafka.fetchConsumerRequestPerSec.oneMinuteRate
+  - mbean: 'kafka.network:type=RequestMetrics,name=RequestsPerSec,request=FetchFollower,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.fetchFollowerRequestPerSec.count
+    - attr: OneMinuteRate
+      field: kafka.fetchFollowerRequestPerSec.oneMinuteRate
+  - mbean: 'kafka.network:type=RequestMetrics,name=TotalTimeMs,request=Produce,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.produceTotalTimeMs.count
+    - attr: 99thPercentile
+      field: kafka.produceTotalTimeMs.99thPercentile
+  - mbean: 'kafka.network:type=RequestMetrics,name=TotalTimeMs,request=FetchConsumer,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.fetchConsumerTotalTimeMs.count
+    - attr: 99thPercentile
+      field: kafka.fetchConsumerTotalTimeMs.99thPercentile
+  - mbean: 'kafka.network:type=RequestMetrics,name=TotalTimeMs,request=FetchFollower,version=*'
+    attributes:
+    - attr: Count
+      field: kafka.fetchFollowerTotalTimeMs.count
+    - attr: 99thPercentile
+      field: kafka.fetchFollowerTotalTimeMs.99thPercentile
+  - mbean: 'kafka.network:type=SocketServer,name=NetworkProcessorAvgIdlePercent'
+    attributes:
+    - attr: Value
+      field: kafka.socket.networkProcessorAvgIdlePercent.value
+  jmx.application:
+  jmx.instance:
