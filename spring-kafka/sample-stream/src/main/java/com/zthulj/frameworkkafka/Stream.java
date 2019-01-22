@@ -1,4 +1,4 @@
-package com.lyreco.frameworkkafka;
+package com.zthulj.frameworkkafka;
 
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;

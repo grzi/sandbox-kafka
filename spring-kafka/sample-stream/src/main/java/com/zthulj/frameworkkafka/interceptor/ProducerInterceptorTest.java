@@ -1,4 +1,4 @@
-package com.lyreco.frameworkkafka.interceptor;
+package com.zthulj.frameworkkafka.interceptor;
 
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
