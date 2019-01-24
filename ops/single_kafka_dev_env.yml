@@ -1,0 +1,8 @@
+- hosts: sandbox
+  tasks:
+  - import_role:
+      name: prepare
+  - import_role:
+      name: zookeeper
+  - import_role:
+      name: kafka-broker
