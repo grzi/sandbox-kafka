@@ -1,3 +1,6 @@
+zookeeper:
+  config:
+    clientPort: 2181
 kafka:
   broker:
     user: cp-kafka
@@ -14,6 +17,7 @@ kafka:
     environment:
       KAFKA_HEAP_OPTS: "-Xmx1g"
     config:
+      port: 9092
       group.initial.rebalance.delay.ms: 0
       log.retention.check.interval.ms: 300000
       log.retention.hours: 168
@@ -29,8 +33,4 @@ kafka:
       transaction.state.log.min.isr: 2
       transaction.state.log.replication.factor: 3
       zookeeper.connection.timeout.ms: 6000
-      metric.reporters: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      confluent.metrics.reporter.bootstrap.servers: "{{inventory_hostname}}:{{broker.config.port}}"
-      confluent.metrics.reporter.topic.replicas: 3
       ssl.endpoint.identification.algorithm: ""
-      confluent.metrics.reporter.ssl.endpoint.identification.algorithm: ""
