@@ -4,3 +4,4 @@
     - zookeeper
     - kafka-broker
     - schema-registry
+    - kafka-connect

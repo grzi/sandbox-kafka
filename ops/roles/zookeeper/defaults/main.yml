@@ -13,7 +13,7 @@ zookeeper:
     dataDir: /var/lib/zookeeper
     clientPort: 2181
   environment:
-    KAFKA_HEAP_OPTS: "-Xmx1000M"
+    KAFKA_HEAP_OPTS: "-Xmx256M"
   systemd:
     enabled: yes
     state: started

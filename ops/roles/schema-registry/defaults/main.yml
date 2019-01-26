@@ -16,8 +16,12 @@ schema:
       kafkastore.topic: _schemas
       debug: false
       kafkastore.ssl.endpoint.identification.algorithm: ""
+      kafkastore.topic.replication.factor: 1
+      config.storage.replication.factor: 1
+      offset.storage.replication.factor: 1
+      status.storage.replication.factor: 1
     environment:
-      SCHEMA_REGISTRY_HEAP_OPTS: "-Xmx1000M"
+      SCHEMA_REGISTRY_HEAP_OPTS: "-Xmx256M -Dkafka.logs.dir=/var/log/kafka-schema"
     systemd:
       enabled: yes
       state: started

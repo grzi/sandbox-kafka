@@ -9,7 +9,6 @@
     group: "{{zookeeper.group}}"
 - name: zookeeper myid file
   template:
-    debugger: on_failed
     src: myid.j2
     dest: "{{zookeeper.config.dataDir}}/myid"
     mode: 0555
