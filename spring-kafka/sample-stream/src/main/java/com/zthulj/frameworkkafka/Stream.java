@@ -1,19 +1,20 @@
 package com.zthulj.frameworkkafka;
 
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.Topology;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Stream {
 
-    @Bean
-    public KStream<Integer, String> ultraComplexStream(StreamsBuilder kStreamBuilder) {
-        KStream<Integer, String> stream = kStreamBuilder.stream("topicInput");
-        stream = stream.mapValues(e -> e.toUpperCase());
-        stream.to("topicResult");
-        return stream;
+    public static final String SOURCE = "test-topic-source";
+    public static final String TARGET = "test-topic-target";
+
+    @Bean(name = "streamBuilder")
+    public Topology getStreamTopology(StreamsBuilder kStreamBuilder){
+        kStreamBuilder.stream(SOURCE).mapValues((o, o2) -> o2.toString() + o2.toString()).to(TARGET);
+        return kStreamBuilder.build();
     }
 
 }

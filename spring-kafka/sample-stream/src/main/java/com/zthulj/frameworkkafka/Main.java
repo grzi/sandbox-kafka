@@ -22,7 +22,7 @@ public class Main {
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public KafkaStreamsConfiguration kStreamsConfigs(KafkaProperties props) {
-        return new KafkaStreamsConfiguration(props.getStreams().buildProperties());
+        return new KafkaStreamsConfiguration(props.buildStreamsProperties());
     }
 }
 

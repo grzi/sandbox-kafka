@@ -1,0 +1,29 @@
+spring:
+    kafka:
+        streams:
+            bootstrap-servers: localhost:29092
+            application-id: test-id
+            properties:
+                poll.ms: 101
+                request.timeout.ms: 40001
+                retries: 2147483646
+                retry.backoff.ms: 100
+                default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+                default.timestamp.extractor: org.apache.kafka.streams.processor.WallclockTimestampExtractor
+                # sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="test" password="test-secret";
+                # security.protocol: SASL_PLAINTEXT
+                # sasl.mechanism: SHA-SCRAM-512
+                consumer.interceptor.classes: com.zthulj.frameworkkafka.interceptor.ConsumerInterceptorTest
+                producer.interceptor.classes: com.zthulj.frameworkkafka.interceptor.ProducerInterceptorTest
+                producer.compression.type: zstd
+                producer.enable.idempotence: true
+                producer.acks: -1
+                producer.max.in.flight.requests.per.connection: 1
+                producer.batch.size: 163848
+
+
+
+
+
+
